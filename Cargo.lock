@@ -2446,6 +2446,7 @@ dependencies = [
 name = "raysql"
 version = "0.6.0"
 dependencies = [
+ "anyhow",
  "datafusion",
  "datafusion-proto",
  "datafusion-python",
