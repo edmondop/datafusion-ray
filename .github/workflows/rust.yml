@@ -22,6 +22,4 @@ jobs:
       - name: Generate TPCH
         run: |
           cargo install cargo-make
-          cargo make generate_tpch_data
-      - name: Run tests
-        run: cargo test --verbose
+          cargo make test --verbose
