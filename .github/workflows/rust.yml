@@ -32,7 +32,7 @@ jobs:
       - name: Generate test data
         run: |
           mkdir -p data
-          python -m tpch.tpchgen generate --scale-factor ${{env.SAMPLING_RATE}} --partitions 1
+          python -m tpch.tpchgen generate --scale-factor ${{env.TPCH_SAMPLING_RATE}} --partitions 1
           python -m tpch.tpchgen convert --partitions 1
       - name: Run tests
         run: cargo test --verbose
