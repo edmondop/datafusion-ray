@@ -2,11 +2,15 @@ name: Rust
 
 on:
   push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
-  TPCH_SAMPLING_RATE: 0.1
-  TPCH_DATA_PATH: test_files/tpch/data
+  PYTHON_VERSION: 3.9
+  TPCH_SAMPLING_RATE: "1" # (1/100)
+  TPCH_DATA_PATH: "data"
 
 jobs:
   build:
@@ -19,7 +23,18 @@ jobs:
         run: sudo apt-get install protobuf-compiler
       - name: Build Rust code
         run: cargo build --verbose
-      - name: Generate TPCH
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install test dependencies
         run: |
-          cargo install cargo-make
-          cargo make test --verbose
+          python -m pip install --upgrade pip
+          pip install -r tpch/requirements.txt
+      - name: Generate test data
+        run: |
+          mkdir -p data
+          python -m tpch.tpchgen generate --sf ${{env.SAMPLING_RATE}} --partitions 1
+          python -m tpch.tpchgen convert --partitions 1
+      - name: Run tests
+        run: cargo test --verbose
