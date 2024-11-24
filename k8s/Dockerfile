@@ -8,13 +8,17 @@ RUN sudo apt update && \
 # Intall Rust
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
 
-COPY . /home/ray/datafusion_ray
 WORKDIR /home/ray/datafusion_ray
 
-# Build within container
+# Copy requirements file and install dependencies
+COPY requirements-in.txt /home/ray/datafusion_ray/requirements-in.txt
+RUN pip3 install -r /home/ray/datafusion_ray/requirements-in.txt
 
+# Copy the rest of the source code
+COPY . /home/ray/datafusion_ray
+
+# Build within container
 RUN sudo chown -R ray:users /home/ray/datafusion_ray && \
-    pip3 install -r requirements-in.txt && \
     source /home/ray/.cargo/env && \
     maturin build --release
 
